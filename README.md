@@ -1,5 +1,9 @@
 # 🐭 Eazi Hanzi
 
+### 🔗 [Pruébala aquí: borojito.github.io/Eazi-Hanzi](https://borojito.github.io/Eazi-Hanzi/)
+
+Ábrela desde cualquier dispositivo, no necesita instalación ni cuenta.
+
 Herramienta web para aprender caracteres chinos (hanzi) de forma independiente y sin cuenta: flashcards, pronunciación (pinyin/tonos), trazos y un reto personalizado.
 
 Sitio 100% estático (HTML/CSS/JS), sin backend ni base de datos. Hecho con ayuda de [Claude Code](https://claude.com/claude-code); estilos e ilustraciones apoyados en [Google Stitch](https://stitch.withgoogle.com/).
@@ -72,14 +76,9 @@ Todo se guarda en `localStorage` del navegador, sin cuenta ni login:
 
 Al pegar una lista nueva se eliminan los niveles de dominio de caracteres que ya no estén en ella — la app solo trabaja con la sesión activa, no mantiene una biblioteca acumulada entre sesiones. El botón **"Borrar todo y empezar de cero"** (en el inicio) borra todo lo guardado.
 
-## 🚀 Desplegar en GitHub Pages
+## 🚀 Desplegado en GitHub Pages
 
-1. Subir este repositorio a GitHub (puede ser público).
-2. Ir a `Settings → Pages` y activar GitHub Pages eligiendo la rama y carpeta de publicación (por ejemplo, `main` / `/root`).
-3. GitHub genera una URL pública tipo `usuario.github.io/nombre-repo`.
-4. Cada push a la rama configurada actualiza el sitio automáticamente.
-
-No requiere build ni instalación de dependencias: es HTML/CSS/JS plano.
+El sitio ya está publicado y disponible en **https://borojito.github.io/Eazi-Hanzi/** — no requiere build ni instalación de dependencias, es HTML/CSS/JS plano. Cada push a la rama configurada en `Settings → Pages` actualiza el sitio automáticamente.
 
 ## 🛠️ Stack
 
