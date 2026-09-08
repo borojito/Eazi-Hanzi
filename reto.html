@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reto — Eazi Hanzi</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/reto.css">
+</head>
+<body data-page="reto">
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.svg" alt="Mascota Eazi Hanzi" class="brand__logo">
+      <span class="brand__name">Eazi Hanzi</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="flashcards.html">Flashcards</a>
+      <a href="pinyin.html">Pinyin</a>
+      <a href="trazos.html">Trazos</a>
+      <a href="reto.html" class="is-active">Reto</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="section">
+    <div class="container">
+
+      <!-- ---------- Pantalla de configuracion ---------- -->
+      <div id="reto-setup">
+        <h1>Reto</h1>
+        <p class="text-muted">Elige de donde salen los caracteres y en que enfoque(s) quieres que te ponga a prueba.</p>
+
+        <div class="reto-setup-grid">
+          <div class="card reto-panel">
+            <h3>1. Elige el origen</h3>
+            <label class="reto-source-option" for="reto-source-active">
+              <input type="radio" name="reto-source" id="reto-source-active" value="active" checked>
+              <span>
+                <strong>Mi lista de esta sesión</strong>
+                <span class="text-muted reto-source-option__hint" id="reto-source-active-hint">0 caracteres</span>
+              </span>
+            </label>
+            <label class="reto-source-option" for="reto-source-struggling">
+              <input type="radio" name="reto-source" id="reto-source-struggling" value="struggling">
+              <span>
+                <strong>Repasar mis caracteres complicados</strong>
+                <span class="text-muted reto-source-option__hint" id="reto-source-struggling-hint">0 caracteres</span>
+              </span>
+            </label>
+          </div>
+
+          <div class="card reto-panel">
+            <h3>2. Elige el enfoque</h3>
+            <label class="checkbox-row">
+              <input type="checkbox" name="focus" value="escritura" checked>
+              <span>Escritura (trazos)</span>
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" name="focus" value="tonos" checked>
+              <span>Tonos (pinyin)</span>
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" name="focus" value="es" checked>
+              <span>Significado</span>
+            </label>
+
+            <p class="reto-order-note">Las preguntas siempre salen en orden aleatorio.</p>
+
+            <div class="reto-summary" id="reto-summary">0 caracteres seleccionados</div>
+            <button class="btn btn-primary btn-block" id="reto-start" disabled>Empezar reto</button>
+          </div>
+        </div>
+
+        <div class="card empty-state" id="reto-empty-state" hidden>
+          <h2>No hay caracteres disponibles</h2>
+          <p id="reto-empty-message">Pega tu lista en la pantalla de inicio para poder retarte.</p>
+          <a href="index.html" class="btn btn-primary">Ir a Prepárate para aprender</a>
+        </div>
+      </div>
+
+      <!-- ---------- Pantalla de juego ---------- -->
+      <div id="reto-play" hidden>
+        <div class="reto-play-header">
+          <span class="text-muted" id="reto-progress">Pregunta 1 / 10</span>
+          <div class="reto-play-header__actions">
+            <button class="btn btn-secondary btn-sm" id="reto-skip">No la sé, saltar</button>
+            <button class="btn btn-ghost btn-sm" id="reto-quit">Salir del reto</button>
+          </div>
+        </div>
+
+        <div class="card reto-exercise" id="reto-exercise"></div>
+      </div>
+
+      <!-- ---------- Pantalla de resultados ---------- -->
+      <div id="reto-results" hidden>
+        <h1>Resultados de tu reto</h1>
+        <div class="card reto-score-card">
+          <span class="hanzi-display" id="reto-score-value">0/0</span>
+          <p id="reto-score-label">aciertos</p>
+        </div>
+
+        <div class="reto-review" id="reto-review"></div>
+
+        <div class="reto-results-actions">
+          <button class="btn btn-secondary" id="reto-again">Configurar otro reto</button>
+          <a href="index.html" class="btn btn-primary">Volver al inicio</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.0/dist/hanzi-writer.min.js"></script>
+<script src="js/pinyin-tones.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/order-ui.js"></script>
+<script src="js/site-footer.js"></script>
+<script src="js/hanzi-boards.js"></script>
+<script src="js/reto.js"></script>
+
+</body>
+</html>

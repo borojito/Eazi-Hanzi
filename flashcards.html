@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — Eazi Hanzi</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/flashcards.css">
+</head>
+<body data-page="flashcards">
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.svg" alt="Mascota Eazi Hanzi" class="brand__logo">
+      <span class="brand__name">Eazi Hanzi</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="flashcards.html" class="is-active">Flashcards</a>
+      <a href="pinyin.html">Pinyin</a>
+      <a href="trazos.html">Trazos</a>
+      <a href="reto.html">Reto</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="section">
+    <div class="container">
+
+      <div class="card empty-state" id="fc-empty-state" hidden>
+        <h2>Todavia no tienes caracteres</h2>
+        <p>Ve a la pantalla de inicio y pega tu lista para empezar a practicar.</p>
+        <a href="index.html" class="btn btn-primary">Ir a Prepárate para aprender</a>
+      </div>
+
+      <div id="fc-content" hidden>
+        <h1 id="fc-title">Flashcards</h1>
+        <p class="text-muted mb-0">Toca la tarjeta para voltearla y marca tu nivel de dominio.</p>
+
+        <div class="fc-toolbar">
+          <span class="fc-stats"><strong id="fc-index">1</strong> / <span id="fc-total">0</span></span>
+          <div class="order-switch" id="fc-order-switch">
+            <button class="order-switch__btn" data-order="list">En orden</button>
+            <button class="order-switch__btn" data-order="random">Aleatorio</button>
+          </div>
+        </div>
+
+        <div class="practice-layout">
+          <div class="practice-main">
+            <div class="fc-stage">
+              <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Voltear tarjeta">
+                <div class="flashcard__inner" id="flashcard-inner">
+                  <div class="flashcard__face flashcard__face--front">
+                    <span class="flashcard__corner">汉</span>
+                    <span class="hanzi-display hanzi-display--hero" id="fc-hanzi">你</span>
+                    <span class="text-muted flashcard__hint">Toca para voltear</span>
+                  </div>
+                  <div class="flashcard__face flashcard__face--back">
+                    <span class="tone-chip" id="fc-pinyin-chip">nǐ</span>
+                    <div class="flashcard__meanings">
+                      <span id="fc-meaning-es">tú</span>
+                    </div>
+                    <span class="text-muted flashcard__hint">Toca para volver</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fc-nav">
+              <button class="btn btn-ghost" id="fc-prev">&larr; Anterior</button>
+              <button class="btn-seal" id="fc-audio" title="Escuchar pronunciacion" aria-label="Escuchar pronunciacion">&#128266;</button>
+              <button class="btn btn-ghost" id="fc-next">Siguiente &rarr;</button>
+            </div>
+            <p class="nav-hint" id="fc-nav-hint" hidden>Marca tu nivel a la derecha para pasar al siguiente.</p>
+          </div>
+
+          <aside class="mastery-panel" id="fc-mastery-panel"></aside>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section" id="progress-panel"></section>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="js/pinyin-tones.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/mastery-ui.js"></script>
+<script src="js/order-ui.js"></script>
+<script src="js/site-footer.js"></script>
+<script src="js/progress-panel.js"></script>
+<script src="js/flashcards.js"></script>
+</body>
+</html>

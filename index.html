@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eazi Hanzi — Prepárate para aprender</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/home.css">
+</head>
+<body data-page="index">
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.svg" alt="Mascota Eazi Hanzi" class="brand__logo">
+      <span class="brand__name">Eazi Hanzi</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html" class="is-active">Inicio</a>
+      <a href="flashcards.html">Flashcards</a>
+      <a href="pinyin.html">Pinyin</a>
+      <a href="trazos.html">Trazos</a>
+      <a href="reto.html">Reto</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="section hero">
+    <div class="container">
+      <h1 class="hero__title">Prepárate para aprender</h1>
+      <p class="hero__subtitle">Cada sesión empieza con tu propia lista — esta app no trae caracteres de fábrica. Pega los que quieras estudiar hoy y practica en los 4 módulos.</p>
+    </div>
+  </section>
+
+  <section class="section setup-section">
+    <div class="container">
+      <div class="setup-grid">
+
+        <div class="card setup-panel">
+          <h3>1. Genera los datos con tu IA</h3>
+          <p class="text-muted setup-panel__hint">Copia este prompt, pégalo en tu IA favorita (junto con los caracteres que quieras) y trae la respuesta de vuelta aquí.</p>
+          <textarea class="ai-prompt-box" id="ai-prompt-box" rows="9"></textarea>
+          <button class="btn btn-secondary btn-block btn-sm" id="copy-prompt-btn">Copiar prompt</button>
+        </div>
+
+        <div class="card setup-panel">
+          <h3>2. Pega la respuesta de tu IA</h3>
+          <p class="text-muted setup-panel__hint">Una línea por caracter o palabra, en el formato <code>caracter | pinyin | español</code>.</p>
+          <textarea id="ai-response-input" rows="7" placeholder="你好 | nǐ hǎo | hola&#10;谢谢 | xièxiè | gracias"></textarea>
+          <button class="btn btn-primary btn-block" id="start-session-btn">Comenzar</button>
+          <p class="setup-feedback" id="setup-feedback" hidden></p>
+        </div>
+
+      </div>
+
+      <div class="active-list-summary" id="active-list-summary" hidden>
+        <h3>Tu lista de esta sesión</h3>
+        <div class="active-list-chips" id="active-list-chips"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section modules-section">
+    <div class="container">
+      <h2 class="section-title">Elige tu práctica</h2>
+      <p class="text-muted" id="modules-hint">Pega tu lista y presiona "Comenzar" para desbloquear los módulos.</p>
+
+      <div class="grid" id="modules-grid">
+        <a href="flashcards.html" class="card card--interactive module-card module-card--locked" style="grid-column: span 4;" data-module>
+          <div class="module-card__icon">卡</div>
+          <h3>Flashcards</h3>
+          <p>Voltea la tarjeta y descubre pinyin y significado. Marca tu nivel de dominio.</p>
+          <span class="module-card__cta">Practicar &rarr;</span>
+        </a>
+        <a href="pinyin.html" class="card card--interactive module-card module-card--locked" style="grid-column: span 4;" data-module>
+          <div class="module-card__icon">音</div>
+          <h3>Pinyin y tonos</h3>
+          <p>Identifica el pinyin y el tono correcto de cada caracter, con audio de apoyo.</p>
+          <span class="module-card__cta">Practicar &rarr;</span>
+        </a>
+        <a href="trazos.html" class="card card--interactive module-card module-card--locked" style="grid-column: span 4;" data-module>
+          <div class="module-card__icon">笔</div>
+          <h3>Trazos</h3>
+          <p>Mira la animación trazo a trazo y luego intenta escribir el caracter tu misma.</p>
+          <span class="module-card__cta">Practicar &rarr;</span>
+        </a>
+        <a href="reto.html" class="card card--interactive module-card module-card--reto" style="grid-column: span 4;">
+          <div class="module-card__icon">战</div>
+          <h3>Reto</h3>
+          <p>Pon a prueba tu lista de la sesión, o repasa directo tus caracteres complicados.</p>
+          <span class="module-card__cta">Practicar &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="progress-panel"></section>
+
+  <section class="section">
+    <div class="container">
+      <div class="reset-row">
+        <button class="btn btn-danger-outline" id="reset-app-btn">Borrar todo y empezar de cero</button>
+        <span class="text-muted reset-row__hint">Borra tu lista y tus niveles guardados en este navegador.</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<p class="footer-note">Eazi Hanzi · Tu progreso se guarda solo en este navegador.</p>
+
+<script src="js/pinyin-tones.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/parse.js"></script>
+<script src="js/site-footer.js"></script>
+<script src="js/progress-panel.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>

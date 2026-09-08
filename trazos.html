@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trazos — Eazi Hanzi</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/trazos.css">
+</head>
+<body data-page="trazos">
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.svg" alt="Mascota Eazi Hanzi" class="brand__logo">
+      <span class="brand__name">Eazi Hanzi</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="flashcards.html">Flashcards</a>
+      <a href="pinyin.html">Pinyin</a>
+      <a href="trazos.html" class="is-active">Trazos</a>
+      <a href="reto.html">Reto</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="section">
+    <div class="container">
+
+      <div class="card empty-state" id="tz-empty-state" hidden>
+        <h2>Todavia no tienes caracteres</h2>
+        <p>Ve a la pantalla de inicio y pega tu lista para empezar a practicar.</p>
+        <a href="index.html" class="btn btn-primary">Ir a Prepárate para aprender</a>
+      </div>
+
+      <div id="tz-content" hidden>
+        <h1 id="tz-title">Trazos</h1>
+        <p class="text-muted">Mira la animacion del orden de trazos y luego intenta dibujar el caracter tu misma sobre la cuadricula.</p>
+
+        <div class="tz-toolbar">
+          <div class="tz-char-info">
+            <span class="tz-char-info__hanzi" id="tz-current-hanzi">你</span>
+            <div class="tz-char-info__text">
+              <span class="tone-chip" id="tz-pinyin-chip">nǐ</span>
+              <span class="text-muted" id="tz-meaning">tú · you</span>
+            </div>
+          </div>
+          <div class="order-switch" id="tz-order-switch">
+            <button class="order-switch__btn" data-order="list">En orden</button>
+            <button class="order-switch__btn" data-order="random">Aleatorio</button>
+          </div>
+        </div>
+
+        <div class="practice-layout">
+          <div class="practice-main">
+            <div class="tz-board-col">
+              <div class="tz-boards" id="tz-boards"></div>
+
+              <div class="tz-mode-toggle">
+                <button class="btn btn-secondary is-active" id="tz-mode-watch">Ver animacion</button>
+                <button class="btn btn-secondary" id="tz-mode-quiz">Quiero escribirlo</button>
+              </div>
+
+              <div class="tz-controls">
+                <button class="btn-seal" id="tz-reset" title="Reiniciar">&#8635;</button>
+                <button class="btn-seal" id="tz-audio" title="Escuchar pronunciacion" aria-label="Escuchar pronunciacion">&#128266;</button>
+                <button class="btn-seal" id="tz-play" title="Reproducir / pausar">&#9654;</button>
+                <div class="tz-speed" id="tz-speed">
+                  <label for="tz-speed-range">Velocidad</label>
+                  <input type="range" id="tz-speed-range" min="0.5" max="2" step="0.25" value="1">
+                </div>
+              </div>
+
+              <p class="tz-quiz-feedback" id="tz-quiz-feedback" hidden></p>
+            </div>
+
+            <div class="tz-nav">
+              <button class="btn btn-ghost" id="tz-prev">&larr; Anterior</button>
+              <span class="text-muted" id="tz-position">1 / 0</span>
+              <button class="btn btn-ghost" id="tz-next">Siguiente &rarr;</button>
+            </div>
+            <p class="nav-hint" id="tz-nav-hint" hidden>Marca tu nivel a la derecha para pasar al siguiente.</p>
+          </div>
+
+          <aside class="mastery-panel" id="tz-mastery-panel"></aside>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section" id="progress-panel"></section>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.0/dist/hanzi-writer.min.js"></script>
+<script src="js/pinyin-tones.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/mastery-ui.js"></script>
+<script src="js/order-ui.js"></script>
+<script src="js/site-footer.js"></script>
+<script src="js/progress-panel.js"></script>
+<script src="js/hanzi-boards.js"></script>
+<script src="js/trazos.js"></script>
+</body>
+</html>

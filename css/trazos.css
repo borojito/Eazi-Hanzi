@@ -1,0 +1,87 @@
+.tz-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1.25rem 0 1.75rem;
+}
+
+.tz-char-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.tz-char-info__hanzi {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  color: var(--color-primary-active);
+  line-height: 1;
+}
+.tz-char-info__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+.tz-board-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Una cuadricula por caracter de la palabra */
+.tz-boards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.tz-mode-toggle {
+  display: flex;
+  gap: 0.6rem;
+}
+.tz-mode-toggle .btn.is-active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.tz-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.tz-speed {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+.tz-speed input[type="range"] {
+  accent-color: var(--color-primary);
+}
+
+.tz-quiz-feedback {
+  font-weight: 700;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-btn);
+  text-align: center;
+  margin: 0;
+}
+
+.tz-nav {
+  margin-top: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}

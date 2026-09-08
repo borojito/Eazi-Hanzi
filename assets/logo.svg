@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Mascota de Eazi Hanzi: una ratita con traje chino tradicional sosteniendo un pincel de caligrafia">
+  <defs>
+    <clipPath id="capsule">
+      <path d="M60 6 C90 6 112 26 112 60 C112 94 90 114 60 114 C30 114 8 94 8 60 C8 26 30 6 60 6 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Capsula -->
+  <path d="M60 6 C90 6 112 26 112 60 C112 94 90 114 60 114 C30 114 8 94 8 60 C8 26 30 6 60 6 Z"
+        fill="#FFFDF9" stroke="#E38A7A" stroke-width="4"/>
+
+  <g clip-path="url(#capsule)">
+    <!-- fondo suave -->
+    <circle cx="60" cy="60" r="60" fill="#FBF7F0"/>
+
+    <!-- oreja izquierda -->
+    <circle cx="42" cy="34" r="10" fill="#F3E7DD" stroke="#1E1B18" stroke-width="2.2"/>
+    <circle cx="42" cy="34" r="4.5" fill="#EFC9BE"/>
+    <!-- oreja derecha -->
+    <circle cx="78" cy="34" r="10" fill="#F3E7DD" stroke="#1E1B18" stroke-width="2.2"/>
+    <circle cx="78" cy="34" r="4.5" fill="#EFC9BE"/>
+
+    <!-- cabeza -->
+    <ellipse cx="60" cy="52" rx="24" ry="21" fill="#F8F0E7" stroke="#1E1B18" stroke-width="2.2"/>
+
+    <!-- traje / cuerpo con cuello dorado -->
+    <path d="M32 112 C34 88 46 74 60 74 C74 74 86 88 88 112 Z" fill="#C22F2F" stroke="#1E1B18" stroke-width="2.2"/>
+    <path d="M46 78 C50 90 70 90 74 78" fill="none" stroke="#D4A359" stroke-width="4" stroke-linecap="round"/>
+    <path d="M60 78 L60 112" stroke="#D4A359" stroke-width="2.5"/>
+    <circle cx="60" cy="88" r="2" fill="#D4A359"/>
+    <circle cx="60" cy="98" r="2" fill="#D4A359"/>
+    <circle cx="60" cy="108" r="2" fill="#D4A359"/>
+
+    <!-- cara -->
+    <circle cx="52" cy="52" r="2.3" fill="#1E1B18"/>
+    <circle cx="68" cy="52" r="2.3" fill="#1E1B18"/>
+    <path d="M56 60 Q60 64 64 60" fill="none" stroke="#1E1B18" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="47" cy="58" rx="3.5" ry="2.2" fill="#EFC9BE" opacity="0.8"/>
+    <ellipse cx="73" cy="58" rx="3.5" ry="2.2" fill="#EFC9BE" opacity="0.8"/>
+
+    <!-- bigotes -->
+    <path d="M38 54 L28 52 M38 58 L27 58" stroke="#1E1B18" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M82 54 L92 52 M82 58 L93 58" stroke="#1E1B18" stroke-width="1.4" stroke-linecap="round"/>
+
+    <!-- brazo y pincel -->
+    <path d="M78 92 C88 88 94 78 96 66" fill="none" stroke="#C22F2F" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="96" cy="65" r="4.5" fill="#F3E7DD" stroke="#1E1B18" stroke-width="1.8"/>
+    <path d="M96 61 L100 40" stroke="#4A433E" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M99 42 C103 38 104 32 101 27 C97 31 96 38 99 42 Z" fill="#1E1B18"/>
+
+    <!-- cola -->
+    <path d="M32 108 C18 100 16 84 26 76" fill="none" stroke="#1E1B18" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+</svg>

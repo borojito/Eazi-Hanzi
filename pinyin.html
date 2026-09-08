@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinyin y tonos — Eazi Hanzi</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/pinyin.css">
+</head>
+<body data-page="pinyin">
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.svg" alt="Mascota Eazi Hanzi" class="brand__logo">
+      <span class="brand__name">Eazi Hanzi</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="flashcards.html">Flashcards</a>
+      <a href="pinyin.html" class="is-active">Pinyin</a>
+      <a href="trazos.html">Trazos</a>
+      <a href="reto.html">Reto</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="section">
+    <div class="container">
+
+      <div class="card empty-state" id="py-empty-state" hidden>
+        <h2>Todavia no tienes caracteres</h2>
+        <p>Ve a la pantalla de inicio y pega tu lista para empezar a practicar.</p>
+        <a href="index.html" class="btn btn-primary">Ir a Prepárate para aprender</a>
+      </div>
+
+      <div id="py-content" hidden>
+        <h1 id="py-title">Pinyin y tonos</h1>
+        <p class="text-muted mb-0">Todas las opciones son la misma sílaba con distinto tono — fíjate bien en la marca.</p>
+
+        <div class="py-toolbar">
+          <span class="py-stats">
+            <strong id="py-index">1</strong> / <span id="py-total">0</span>
+            <span class="py-stats__sep">·</span>
+            <span id="py-score">0 aciertos</span>
+          </span>
+          <div class="order-switch" id="py-order-switch">
+            <button class="order-switch__btn" data-order="list">En orden</button>
+            <button class="order-switch__btn" data-order="random">Aleatorio</button>
+          </div>
+        </div>
+
+        <div class="practice-layout">
+          <div class="practice-main">
+            <div class="py-stage card">
+              <button class="btn-seal py-audio" id="py-audio" aria-label="Reproducir audio del caracter" title="Escuchar pronunciacion">&#128266;</button>
+              <span class="hanzi-display hanzi-display--hero" id="py-hanzi">你</span>
+              <span class="text-muted py-meaning" id="py-meaning"></span>
+              <div class="py-options" id="py-options"></div>
+              <div class="py-feedback" id="py-feedback" hidden></div>
+            </div>
+
+            <div class="py-nav">
+              <button class="btn btn-primary" id="py-next" disabled>Siguiente &rarr;</button>
+            </div>
+            <p class="nav-hint" id="py-nav-hint" hidden>Marca tu nivel a la derecha para pasar al siguiente.</p>
+          </div>
+
+          <aside class="mastery-panel" id="py-mastery-panel"></aside>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section" id="progress-panel"></section>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="js/pinyin-tones.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/mastery-ui.js"></script>
+<script src="js/order-ui.js"></script>
+<script src="js/site-footer.js"></script>
+<script src="js/progress-panel.js"></script>
+<script src="js/pinyin.js"></script>
+</body>
+</html>
