@@ -6,6 +6,7 @@
   let source = [];
   let order = [];
   let index = 0;
+  let listIndex = 0; // puesto donde iba en "En orden", para volver ahi al salir de Aleatorio
   let score = 0;
   let answered = false;
   let correctToneOfQuestion = 0; // tono de la silaba que se esta preguntando
@@ -21,6 +22,7 @@
   const indexEl = document.getElementById('py-index');
   const totalEl = document.getElementById('py-total');
   const scoreEl = document.getElementById('py-score');
+  const prevBtn = document.getElementById('py-prev');
   const nextBtn = document.getElementById('py-next');
   const audioBtn = document.getElementById('py-audio');
   const masteryPanelEl = document.getElementById('py-mastery-panel');
@@ -114,11 +116,13 @@
     speakChinese(char.hanzi);
   }
 
-  /* Para avanzar hay que responder Y marcar el nivel del caracter */
+  /* Si el caracter ya tiene un nivel marcado (de esta vuelta o de una anterior),
+     se puede continuar sin responder el quiz. Si no, hay que marcar un nivel primero. */
   function updateNextState() {
     const rated = isRated(order[index].hanzi);
-    nextBtn.disabled = !(answered && rated);
-    navHintEl.hidden = !(answered && !rated);
+    prevBtn.disabled = !rated;
+    nextBtn.disabled = !rated;
+    navHintEl.hidden = rated;
     renderProgressPanel(); // los conteos de abajo cambian al marcar
   }
 
@@ -128,16 +132,26 @@
     render();
   }
 
-  function rebuild() {
-    order = buildOrder();
-    index = 0;
-    score = 0;
+  function prev() {
+    index = (index - 1 + order.length) % order.length;
     render();
   }
 
   audioBtn.addEventListener('click', () => speakChinese(order[index].hanzi));
+  prevBtn.addEventListener('click', prev);
   nextBtn.addEventListener('click', next);
-  initOrderSwitch(document.getElementById('py-order-switch'), rebuild);
+
+  initOrderSwitch(document.getElementById('py-order-switch'), (isRandom, changed) => {
+    if (isRandom) {
+      if (changed) listIndex = index; // se guarda el puesto en la lista justo antes de salir de "En orden"
+      order = buildOrder();
+      index = 0;
+    } else {
+      order = buildOrder();
+      index = listIndex;
+    }
+    render();
+  });
 
   source = loadSource();
   if (source.length === 0) {

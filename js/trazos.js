@@ -4,6 +4,7 @@
   let source = [];
   let order = [];
   let charIndex = 0;
+  let listIndex = 0; // puesto donde iba en "En orden", para volver ahi al salir de Aleatorio
   let mode = 'watch'; // 'watch' | 'quiz'
   let writers = [];
   let isPlaying = false;
@@ -183,9 +184,15 @@
   prevBtn.addEventListener('click', () => goTo(charIndex - 1));
   nextBtn.addEventListener('click', () => goTo(charIndex + 1));
 
-  initOrderSwitch(document.getElementById('tz-order-switch'), () => {
-    order = buildOrder();
-    goTo(0);
+  initOrderSwitch(document.getElementById('tz-order-switch'), (isRandom, changed) => {
+    if (isRandom) {
+      if (changed) listIndex = charIndex; // se guarda el puesto en la lista justo antes de salir de "En orden"
+      order = buildOrder();
+      goTo(0);
+    } else {
+      order = buildOrder();
+      goTo(listIndex);
+    }
   });
 
   let resizeTimer = null;

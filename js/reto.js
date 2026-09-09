@@ -12,6 +12,7 @@
   let answered = false;          // evita contar dos veces la misma pregunta
   let currentOptionsWrap = null; // opciones en pantalla (para el boton de saltar)
   let currentWriters = [];       // cuadriculas en pantalla (para el boton de saltar)
+  let currentHint = null;        // { hint() } del ejercicio de escritura en pantalla
 
   const setupGridEl = document.querySelector('.reto-setup-grid');
   const emptyStateEl = document.getElementById('reto-empty-state');
@@ -115,6 +116,7 @@
     answered = false;
     currentOptionsWrap = null;
     currentWriters = [];
+    currentHint = null;
     skipBtn.disabled = false;
 
     if (ex.type === 'tonos') renderToneExercise(ex);
@@ -260,7 +262,7 @@
     }
 
     // Terminar de escribirlo cuenta como acierto: los trazos ya se validan solos.
-    quizBoards(result.writers, {
+    const quiz = quizBoards(result.writers, {
       onAllComplete: () => {
         if (answered) return;
         answered = true;
@@ -268,10 +270,26 @@
         showFeedbackAndNext(true, '¡Muy bien! Escribiste ' + char.hanzi);
       },
     });
+    currentHint = quiz;
+
+    const hintRow = document.createElement('div');
+    hintRow.className = 'reto-exercise__hint';
+    const hintBtn = document.createElement('button');
+    hintBtn.type = 'button';
+    hintBtn.className = 'btn-seal';
+    hintBtn.title = 'Pista: mostrar el siguiente trazo';
+    hintBtn.setAttribute('aria-label', 'Pista: mostrar el siguiente trazo');
+    hintBtn.innerHTML = '&#128161;';
+    hintBtn.addEventListener('click', () => currentHint && currentHint.hint());
+    hintRow.appendChild(hintBtn);
+    exerciseEl.appendChild(hintRow);
   }
 
   function showFeedbackAndNext(isCorrect, message) {
     skipBtn.disabled = true;
+    currentHint = null;
+    const hintBtn = exerciseEl.querySelector('.reto-exercise__hint button');
+    if (hintBtn) hintBtn.disabled = true;
 
     const feedback = document.createElement('div');
     feedback.className = 'reto-exercise__feedback ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');

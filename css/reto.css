@@ -113,6 +113,12 @@
   width: 100%;
 }
 
+.reto-exercise__hint {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
 .reto-exercise__options {
   display: grid;
   grid-template-columns: 1fr 1fr;

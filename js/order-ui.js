@@ -25,10 +25,14 @@ function initOrderSwitch(switchEl, onChange) {
   buttons.forEach((btn) => {
     btn.addEventListener('click', () => {
       const isRandom = btn.dataset.order === 'random';
-      if (isRandom === getRandomOrder()) return;
+      const changed = isRandom !== getRandomOrder();
       setRandomOrder(isRandom);
       paint();
-      if (onChange) onChange(isRandom);
+      // "Aleatorio" reordena en cada click, aunque ya estuviera activo.
+      // "En orden" solo dispara el cambio si realmente se venia de aleatorio.
+      // `changed` avisa al modulo si esta es la transicion real (para que sepa
+      // cuando guardar/restaurar el puesto en el que iba en la lista en orden).
+      if (onChange && (changed || isRandom)) onChange(isRandom, changed);
     });
   });
 

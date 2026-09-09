@@ -4,6 +4,7 @@
   let source = [];
   let deck = [];
   let index = 0;
+  let listIndex = 0; // puesto donde iba en "En orden", para volver ahi al salir de Aleatorio
 
   const emptyStateEl = document.getElementById('fc-empty-state');
   const contentEl = document.getElementById('fc-content');
@@ -39,7 +40,16 @@
 
   function render() {
     const char = deck[index];
-    cardEl.classList.remove('is-flipped');
+
+    // Si la tarjeta estaba volteada, no se anima la vuelta al frente: si no, el
+    // contenido nuevo se actualiza a mitad de giro y por un instante se ve el
+    // siguiente caracter en la cara de atras (se siente como que se traba/salta).
+    const wasFlipped = cardEl.classList.contains('is-flipped');
+    if (wasFlipped) {
+      cardEl.classList.add('no-flip-transition');
+      cardEl.classList.remove('is-flipped');
+    }
+
     hanziEl.textContent = char.hanzi;
     applyTone(char);
     meaningEsEl.textContent = char.meaning_es;
@@ -53,6 +63,13 @@
       onChange: updateNavLock,
     });
     updateNavLock();
+
+    if (wasFlipped) {
+      // fuerza reflow para que el navegador aplique el reseteo sin transicion
+      // antes de volver a habilitarla para el proximo volteo del usuario
+      void cardEl.offsetWidth;
+      cardEl.classList.remove('no-flip-transition');
+    }
   }
 
   /* No se puede avanzar sin marcar el nivel del caracter actual */
@@ -87,9 +104,15 @@
   prevBtn.addEventListener('click', prev);
   audioBtn.addEventListener('click', () => speakChinese(deck[index].hanzi));
 
-  initOrderSwitch(document.getElementById('fc-order-switch'), () => {
-    deck = buildDeck(source);
-    index = 0;
+  initOrderSwitch(document.getElementById('fc-order-switch'), (isRandom, changed) => {
+    if (isRandom) {
+      if (changed) listIndex = index; // se guarda el puesto en la lista justo antes de salir de "En orden"
+      deck = buildDeck(source);
+      index = 0;
+    } else {
+      deck = buildDeck(source);
+      index = listIndex;
+    }
     render();
   });
 
