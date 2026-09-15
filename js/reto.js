@@ -12,7 +12,6 @@
   let answered = false;          // evita contar dos veces la misma pregunta
   let currentOptionsWrap = null; // opciones en pantalla (para el boton de saltar)
   let currentWriters = [];       // cuadriculas en pantalla (para el boton de saltar)
-  let currentHint = null;        // { hint() } del ejercicio de escritura en pantalla
 
   const setupGridEl = document.querySelector('.reto-setup-grid');
   const emptyStateEl = document.getElementById('reto-empty-state');
@@ -116,7 +115,6 @@
     answered = false;
     currentOptionsWrap = null;
     currentWriters = [];
-    currentHint = null;
     skipBtn.disabled = false;
 
     if (ex.type === 'tonos') renderToneExercise(ex);
@@ -230,8 +228,10 @@
     currentOptionsWrap = optionsWrap;
   }
 
-  /* Escritura: de memoria — sin contorno guia. Se muestra pinyin y traduccion,
-     y una cuadricula por cada caracter de la palabra. */
+  /* Escritura: de memoria — dibujo libre (sin contorno guia y sin validar trazo
+     por trazo). Se muestra pinyin y traduccion, una cuadricula libre por cada
+     caracter de la palabra, y un boton para mandar el dibujo a reconocer
+     (ver js/handwriting.js). */
   function renderWritingExercise(ex) {
     const char = ex.char;
 
@@ -246,50 +246,80 @@
     boardsWrap.className = 'reto-boards';
     exerciseEl.appendChild(boardsWrap);
 
-    const result = createHanziBoards(boardsWrap, char.hanzi, {
-      showOutline: false,        // de memoria: sin sombra del caracter
-      showHintAfterMisses: false,
-      leniency: 1.3,
-      size: char.hanzi.length > 1 ? 200 : 260,
-    });
-    currentWriters = result.writers;
-
-    if (result.writers.length === 0) {
+    const chars = splitHanziChars(char.hanzi);
+    if (chars.length === 0) {
       answered = true;
       recordResult(ex, false);
       showFeedbackAndNext(false, 'No hay caracteres chinos que dibujar aqui.');
       return;
     }
 
-    // Terminar de escribirlo cuenta como acierto: los trazos ya se validan solos.
-    const quiz = quizBoards(result.writers, {
-      onAllComplete: () => {
-        if (answered) return;
-        answered = true;
-        recordResult(ex, true);
-        showFeedbackAndNext(true, '¡Muy bien! Escribiste ' + char.hanzi);
-      },
+    const size = char.hanzi.length > 1 ? 200 : 260;
+    currentWriters = chars.map(() => {
+      const board = document.createElement('div');
+      boardsWrap.appendChild(board);
+      return createFreehandBoard(board, size);
     });
-    currentHint = quiz;
 
-    const hintRow = document.createElement('div');
-    hintRow.className = 'reto-exercise__hint';
-    const hintBtn = document.createElement('button');
-    hintBtn.type = 'button';
-    hintBtn.className = 'btn-seal';
-    hintBtn.title = 'Pista: mostrar el siguiente trazo';
-    hintBtn.setAttribute('aria-label', 'Pista: mostrar el siguiente trazo');
-    hintBtn.innerHTML = '&#128161;';
-    hintBtn.addEventListener('click', () => currentHint && currentHint.hint());
-    hintRow.appendChild(hintBtn);
-    exerciseEl.appendChild(hintRow);
+    const recognizeRow = document.createElement('div');
+    recognizeRow.className = 'reto-exercise__recognize-row';
+    const recognizeBtn = document.createElement('button');
+    recognizeBtn.type = 'button';
+    recognizeBtn.className = 'btn btn-amber';
+    recognizeBtn.textContent = 'Reconocer caracter';
+    recognizeRow.appendChild(recognizeBtn);
+    const recognizeFeedback = document.createElement('p');
+    recognizeFeedback.className = 'reto-exercise__recognize-feedback';
+    recognizeFeedback.hidden = true;
+    recognizeRow.appendChild(recognizeFeedback);
+    exerciseEl.appendChild(recognizeRow);
+
+    recognizeBtn.addEventListener('click', () =>
+      recognizeWriting(ex, chars, currentWriters, recognizeBtn, recognizeFeedback)
+    );
+  }
+
+  async function recognizeWriting(ex, chars, boards, btn, feedbackEl) {
+    if (answered) return;
+    if (!boards.some((b) => b.hasStrokes())) {
+      feedbackEl.hidden = false;
+      feedbackEl.className = 'reto-exercise__recognize-feedback feedback-incorrect';
+      feedbackEl.textContent = 'Dibuja el caracter antes de reconocerlo.';
+      return;
+    }
+
+    btn.disabled = true;
+    feedbackEl.hidden = false;
+    feedbackEl.className = 'reto-exercise__recognize-feedback';
+    feedbackEl.textContent = 'Reconociendo...';
+
+    const results = await Promise.all(boards.map((b) => recognizeHandwriting(b.getStrokes(), b.size)));
+
+    if (answered) return; // se salto el ejercicio mientras se esperaba la respuesta
+    btn.disabled = false;
+
+    if (results.some((r) => r === null)) {
+      feedbackEl.className = 'reto-exercise__recognize-feedback feedback-incorrect';
+      feedbackEl.textContent = 'No se pudo conectar con el reconocimiento de escritura. Intenta de nuevo.';
+      return;
+    }
+
+    const allCorrect = chars.every((ch, i) => (results[i] || []).slice(0, 3).includes(ch));
+    if (!allCorrect) {
+      feedbackEl.className = 'reto-exercise__recognize-feedback feedback-incorrect';
+      feedbackEl.textContent = 'Todavia no se reconoce, sigue intentando.';
+      return;
+    }
+
+    answered = true;
+    recordResult(ex, true);
+    showFeedbackAndNext(true, '¡Muy bien! Escribiste ' + ex.char.hanzi);
   }
 
   function showFeedbackAndNext(isCorrect, message) {
     skipBtn.disabled = true;
-    currentHint = null;
-    const hintBtn = exerciseEl.querySelector('.reto-exercise__hint button');
-    if (hintBtn) hintBtn.disabled = true;
+    const recognizeBtn = exerciseEl.querySelector('.reto-exercise__recognize-row button');
+    if (recognizeBtn) recognizeBtn.disabled = true;
 
     const feedback = document.createElement('div');
     feedback.className = 'reto-exercise__feedback ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
@@ -330,10 +360,8 @@
       markCorrectOption(currentOptionsWrap);
     }
     // en escritura se revela el caracter en las cuadriculas
-    currentWriters.forEach((w) => {
-      w.cancelQuiz();
-      w.showCharacter();
-    });
+    const chars = splitHanziChars(char.hanzi);
+    currentWriters.forEach((board, i) => board.showAnswer(chars[i]));
 
     let answer;
     if (ex.type === 'escritura') answer = char.hanzi + ' (' + char.pinyin + ')';

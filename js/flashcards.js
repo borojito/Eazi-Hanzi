@@ -72,12 +72,16 @@
     }
   }
 
-  /* No se puede avanzar sin marcar el nivel del caracter actual */
+  /* No se puede avanzar sin marcar el nivel del caracter actual.
+     Volver hacia atras no requiere marcar el actual, pero solo se puede ir a un
+     caracter anterior que ya este categorizado (si no, se podria volver infinito). */
   function updateNavLock() {
     const locked = !isRated(deck[index].hanzi);
-    prevBtn.disabled = locked;
     nextBtn.disabled = locked;
     navHintEl.hidden = !locked;
+
+    const prevIndex = (index - 1 + deck.length) % deck.length;
+    prevBtn.disabled = !isRated(deck[prevIndex].hanzi);
     renderProgressPanel(); // los conteos de abajo cambian al marcar
   }
 

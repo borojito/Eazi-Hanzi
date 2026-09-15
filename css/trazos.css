@@ -14,7 +14,7 @@
 }
 .tz-char-info__hanzi {
   font-family: var(--font-serif);
-  font-size: 2.2rem;
+  font-size: 3rem;
   color: var(--color-primary-active);
   line-height: 1;
 }
@@ -23,6 +23,9 @@
   flex-direction: column;
   gap: 0.35rem;
   align-items: flex-start;
+}
+.tz-meaning {
+  font-size: 1.15rem;
 }
 
 .tz-board-col {
@@ -43,6 +46,8 @@
 
 .tz-mode-toggle {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.6rem;
 }
 .tz-mode-toggle .btn.is-active {
@@ -68,6 +73,15 @@
 }
 .tz-speed input[type="range"] {
   accent-color: var(--color-primary);
+}
+
+/* Cuadricula de dibujo libre (modo "Dibujar sin ayuda") */
+.freehand-canvas {
+  position: relative;
+  z-index: 1;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
 }
 
 .tz-quiz-feedback {

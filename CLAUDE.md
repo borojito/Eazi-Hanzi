@@ -62,19 +62,22 @@ Si se cambia esta estrategia (ej. por un diccionario tipo CC-CEDICT embebido), a
 ### 3. Trazos
 - Animación trazo por trazo sobre cuadrícula guía (ver sección de diseño: tianzige/mizige).
 - **Palabras de varios caracteres**: Hanzi Writer solo dibuja un carácter por instancia, así que se crea **una cuadrícula por carácter** (`js/hanzi-boards.js`). La animación recorre los tableros en secuencia; el quiz los activa todos a la vez.
-- Modo "quiero escribirlo": el usuario dibuja y se valida en tiempo real.
-- **Una sola barra de controles** para ambos modos (había dos botones de reiniciar): reiniciar y audio siempre visibles; reproducir y velocidad solo en modo animación.
+- Tres modos:
+  - **Ver animación**: reproduce el orden de trazos con Hanzi Writer.
+  - **Dibujar con ayuda**: quiz de Hanzi Writer con el contorno del carácter visible de fondo (`showOutline: true`), valida trazo por trazo y da pista automática a los 2 fallos.
+  - **Dibujar sin ayuda**: dibujo **libre** al estilo drawchinese.com — no es Hanzi Writer. Es una cuadrícula de dibujo propia (`js/handwriting.js`, `createFreehandBoard`) donde el usuario dibuja con el mouse/dedo sin ninguna validación en el camino; al tocar "Reconocer caracter" se manda el trazo al servicio público de reconocimiento de escritura a mano de Google (`inputtools.google.com/request?ime=handwriting`, la misma API que usan herramientas como drawchinese.com/MDBG) y se compara el carácter reconocido contra el real. **Es la única dependencia externa de la app** — se eligió a propósito para lograr dibujo verdaderamente libre, algo que Hanzi Writer no permite (siempre valida contra el trazo esperado). Si falla la conexión se muestra un aviso en vez de romper la pantalla.
+- **Una sola barra de controles** para los tres modos (había dos botones de reiniciar): reiniciar y audio siempre visibles; reproducir y velocidad solo en modo animación.
 - Soporta `?review=1`.
 
 ### 4. Reto
 - Dos formas de armar el reto: **"Mi lista de esta sesión"** o **"Repasar mis caracteres complicados"** (automático, sin volver a escribir nada).
 - Elige uno o varios enfoques: escritura, tonos, significado.
 - **Qué se muestra en cada ejercicio** (la pista nunca puede ser la respuesta):
-  - *Escritura*: pinyin + significado, **sin el hanzi y sin contorno guía** — se escribe de memoria. Una cuadrícula por carácter.
+  - *Escritura*: pinyin + significado, **sin el hanzi y sin contorno guía** — se escribe de memoria, dibujo libre (igual que "Dibujar sin ayuda" en Trazos, ver esa sección). Una cuadrícula por carácter, y un botón ámbar "Reconocer caracter" manda el dibujo al reconocedor de escritura.
   - *Tonos*: solo el hanzi; las opciones son los 5 tonos de la sílaba (igual que el módulo de Pinyin).
   - *Significado*: hanzi + pinyin, y se elige el significado.
 - **Botón "No la sé, saltar"**: cuenta como fallo, revela la respuesta (en escritura muestra el carácter en la cuadrícula) y pasa a la siguiente.
-- **Terminar de escribir cuenta como acierto** — Hanzi Writer ya valida trazo por trazo, así que no se cuentan ni se muestran errores de trazo.
+- **Reconocer correctamente cuenta como acierto** en escritura — no hay conteo de errores de trazo, solo si el reconocimiento coincidió o no.
 - El Reto **siempre va en orden aleatorio** (no tiene switch de orden).
 - Pantalla de resultados con puntaje y resumen de aciertos/errores.
 
@@ -100,7 +103,7 @@ Cada carácter tiene **un solo nivel**, el más reciente, guardado en `localStor
 
 Los niveles 1 y 2 son los que arma automáticamente el "Repaso de complicados" (home y Reto).
 
-**Marcar el nivel es obligatorio**: en Flashcards, Pinyin y Trazos no se puede pasar de carácter sin elegir uno de los 3 niveles. Mientras esté pendiente, los botones de avanzar quedan deshabilitados, aparece un `.nav-hint` y el panel se resalta (`.mastery-panel.is-required`). En Pinyin además hay que haber respondido la pregunta. Un carácter ya calificado en una pasada anterior no vuelve a pedirlo (`isRated()` en `storage.js`).
+**Marcar el nivel es obligatorio solo para avanzar**: en Flashcards, Pinyin y Trazos no se puede pasar al *siguiente* carácter sin elegir uno de los 3 niveles. Mientras esté pendiente, el botón "Siguiente" queda deshabilitado, aparece un `.nav-hint` y el panel se resalta (`.mastery-panel.is-required`). En Pinyin además hay que haber respondido la pregunta. Un carácter ya calificado en una pasada anterior no vuelve a pedirlo (`isRated()` en `storage.js`). El botón **"Anterior" no requiere marcar el carácter actual**, pero sí exige que el carácter al que se volvería ya esté categorizado — si no, queda deshabilitado. Sin este límite se podría "devolver" infinito dando vueltas sobre el orden circular sin marcar nada.
 
 Se renderizan con `renderMasteryPanel()` (`js/mastery-ui.js`) como un **panel a la derecha** del área de práctica (`.practice-layout`, que en desktop es de 2 columnas y en móvil apila). Cada cajita muestra **el conteo** de caracteres de la lista en ese nivel, y al elegir una, un clon del carácter **vuela hasta la cajita** (Web Animations API) y la cajita rebota.
 
@@ -190,7 +193,7 @@ Estética que combina papel de arroz y caligrafía china tradicional con una int
 - **Área de trazos**: cuadrado (320px mobile / 440px desktop), fondo `--color-surface-sunken`, líneas guía tianzige/mizige punteadas en ámbar muy tenue (`rgba(212,163,89,0.35)`).
 - **Insignias de progreso**: cuadrado con esquinas casi rectas (3-4px de radio), estilo sello de tinta estampado.
 - **Chips de tono**: pill (`--radius-pill`) con el color de `--tone-1` a `--tone-neutral` según corresponda.
-- **Carácter protagonista**: `--font-serif`, 80px desktop / 56px mobile.
+- **Carácter protagonista**: `--font-serif`, 100px desktop / 68px mobile (`.hanzi-display--hero`). Pinyin (`.tone-chip`) y significado también se mantienen grandes y legibles en los 4 módulos y en las listas de "Tu progreso" — no volver a los tamaños pequeños de UI genérica.
 
 ### Layout
 
@@ -214,7 +217,8 @@ Estética que combina papel de arroz y caligrafía china tradicional con una int
 ## Estado actual / próximos pasos
 
 - [x] Construir estructura base (pantalla inicial + 4 módulos).
-- [x] Integrar Hanzi Writer en el módulo de Trazos (y en el enfoque "Escritura" del Reto).
+- [x] Integrar Hanzi Writer en el módulo de Trazos ("Ver animación" y "Dibujar con ayuda").
+- [x] Dibujo libre + reconocimiento de escritura (Google handwriting) en "Dibujar sin ayuda" (Trazos) y en el enfoque "Escritura" del Reto.
 - [x] Implementar guardado de progreso en localStorage (`js/storage.js`).
 - [x] Quitar todo contenido precargado — la app arranca vacía, el usuario pega su propia lista.
 - [x] Pantalla "Prepárate para aprender" con prompt de IA + parseo de la respuesta (`js/parse.js`).

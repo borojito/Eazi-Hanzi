@@ -5,8 +5,10 @@
   let order = [];
   let charIndex = 0;
   let listIndex = 0; // puesto donde iba en "En orden", para volver ahi al salir de Aleatorio
-  let mode = 'watch'; // 'watch' | 'quiz'
+  let mode = 'watch'; // 'watch' | 'guided' (con ayuda: muestra el contorno) | 'free' (dibujo libre + reconocimiento)
   let writers = [];
+  let freehandBoards = [];
+  let isRecognizing = false;
   let isPlaying = false;
   let hasAnimated = false;
   let activeWriter = 0;
@@ -26,7 +28,8 @@
   const nextBtn = document.getElementById('tz-next');
 
   const modeWatchBtn = document.getElementById('tz-mode-watch');
-  const modeQuizBtn = document.getElementById('tz-mode-quiz');
+  const modeGuidedBtn = document.getElementById('tz-mode-guided');
+  const modeFreeBtn = document.getElementById('tz-mode-free');
   const quizFeedback = document.getElementById('tz-quiz-feedback');
 
   const playBtn = document.getElementById('tz-play');
@@ -34,6 +37,7 @@
   const audioBtn = document.getElementById('tz-audio');
   const speedWrap = document.getElementById('tz-speed');
   const speedRange = document.getElementById('tz-speed-range');
+  const recognizeBtn = document.getElementById('tz-recognize');
 
   function loadSource() {
     if (isReview) return getStrugglingCharsData();
@@ -65,13 +69,22 @@
     updateNavLock();
   }
 
-  /* No se puede avanzar sin marcar el nivel del caracter actual */
+  /* No se puede avanzar sin marcar el nivel del caracter actual.
+     Volver hacia atras no requiere marcar el actual, pero solo se puede ir a un
+     caracter anterior que ya este categorizado (si no, se podria volver infinito). */
   function updateNavLock() {
     const locked = !isRated(currentChar().hanzi);
-    prevBtn.disabled = locked;
     nextBtn.disabled = locked;
     navHintEl.hidden = !locked;
+
+    const prevIndex = (charIndex - 1 + order.length) % order.length;
+    prevBtn.disabled = !isRated(order[prevIndex].hanzi);
     renderProgressPanel(); // los conteos de abajo cambian al marcar
+  }
+
+  function destroyFreehandBoards() {
+    freehandBoards.forEach((b) => b.destroy());
+    freehandBoards = [];
   }
 
   function buildBoards() {
@@ -80,9 +93,16 @@
     activeWriter = 0;
     playBtn.innerHTML = '&#9654;';
     quizFeedback.hidden = true;
+    recognizeBtn.hidden = mode !== 'free';
+    destroyFreehandBoards();
+
+    if (mode === 'free') {
+      buildFreehandBoards();
+      return;
+    }
 
     const result = createHanziBoards(boardsEl, currentChar().hanzi, {
-      showOutline: mode === 'watch',
+      showOutline: true,
       speed: Number(speedRange.value),
     });
     writers = result.writers;
@@ -94,7 +114,7 @@
       return;
     }
 
-    if (mode === 'quiz') startQuiz();
+    if (mode === 'guided') startQuiz();
   }
 
   function startQuiz() {
@@ -120,11 +140,77 @@
     });
   }
 
+  /* Modo "Dibujar sin ayuda": una cuadricula de dibujo libre por caracter, sin
+     validar nada mientras se dibuja. Recien al tocar "Reconocer" se manda el
+     trazo al reconocedor de escritura (ver js/handwriting.js). */
+  function buildFreehandBoards() {
+    writers = [];
+    boardsEl.innerHTML = '';
+    const chars = splitHanziChars(currentChar().hanzi);
+
+    if (chars.length === 0) {
+      quizFeedback.hidden = false;
+      quizFeedback.className = 'tz-quiz-feedback feedback-incorrect';
+      quizFeedback.textContent = 'No hay caracteres chinos que dibujar en "' + currentChar().hanzi + '".';
+      return;
+    }
+
+    const size = boardSizeFor(chars.length, boardsEl.clientWidth);
+    freehandBoards = chars.map(() => {
+      const board = document.createElement('div');
+      boardsEl.appendChild(board);
+      return createFreehandBoard(board, size);
+    });
+  }
+
+  async function recognizeCurrent() {
+    if (mode !== 'free' || isRecognizing || freehandBoards.length === 0) return;
+
+    const chars = splitHanziChars(currentChar().hanzi);
+    if (!freehandBoards.some((b) => b.hasStrokes())) {
+      quizFeedback.hidden = false;
+      quizFeedback.className = 'tz-quiz-feedback feedback-incorrect';
+      quizFeedback.textContent = 'Dibuja el caracter antes de reconocerlo.';
+      return;
+    }
+
+    isRecognizing = true;
+    recognizeBtn.disabled = true;
+    quizFeedback.hidden = false;
+    quizFeedback.className = 'tz-quiz-feedback';
+    quizFeedback.textContent = 'Reconociendo...';
+
+    const results = await Promise.all(
+      freehandBoards.map((b) => recognizeHandwriting(b.getStrokes(), b.size))
+    );
+
+    isRecognizing = false;
+    recognizeBtn.disabled = false;
+
+    if (results.some((r) => r === null)) {
+      quizFeedback.className = 'tz-quiz-feedback feedback-incorrect';
+      quizFeedback.textContent = 'No se pudo conectar con el reconocimiento de escritura. Intenta de nuevo.';
+      return;
+    }
+
+    const allCorrect = chars.every((ch, i) => (results[i] || []).slice(0, 3).includes(ch));
+
+    if (allCorrect) {
+      quizFeedback.className = 'tz-quiz-feedback feedback-correct';
+      quizFeedback.textContent = '¡Muy bien! Se reconocio ' + currentChar().hanzi + '.';
+    } else {
+      const guess = chars.map((ch, i) => (results[i] && results[i][0]) || '?').join('');
+      quizFeedback.className = 'tz-quiz-feedback feedback-incorrect';
+      quizFeedback.textContent = 'Se reconocio como "' + guess + '". Intenta de nuevo.';
+    }
+  }
+
   function setMode(newMode) {
     mode = newMode;
     modeWatchBtn.classList.toggle('is-active', mode === 'watch');
-    modeQuizBtn.classList.toggle('is-active', mode === 'quiz');
-    // reproducir y velocidad solo aplican a la animacion; el reiniciar sirve en ambos modos
+    modeGuidedBtn.classList.toggle('is-active', mode === 'guided');
+    modeFreeBtn.classList.toggle('is-active', mode === 'free');
+    // reproducir y velocidad solo aplican a la animacion; el reiniciar sirve en todos los modos
     playBtn.hidden = mode !== 'watch';
     speedWrap.hidden = mode !== 'watch';
     buildBoards();
@@ -137,7 +223,8 @@
   }
 
   modeWatchBtn.addEventListener('click', () => setMode('watch'));
-  modeQuizBtn.addEventListener('click', () => setMode('quiz'));
+  modeGuidedBtn.addEventListener('click', () => setMode('guided'));
+  modeFreeBtn.addEventListener('click', () => setMode('free'));
 
   playBtn.addEventListener('click', () => {
     if (writers.length === 0) return;
@@ -176,6 +263,7 @@
 
   resetBtn.addEventListener('click', buildBoards);
   audioBtn.addEventListener('click', () => speakChinese(currentChar().hanzi));
+  recognizeBtn.addEventListener('click', recognizeCurrent);
 
   speedRange.addEventListener('change', () => {
     if (mode === 'watch') buildBoards();

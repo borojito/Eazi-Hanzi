@@ -117,12 +117,16 @@
   }
 
   /* Si el caracter ya tiene un nivel marcado (de esta vuelta o de una anterior),
-     se puede continuar sin responder el quiz. Si no, hay que marcar un nivel primero. */
+     se puede continuar sin responder el quiz. Si no, hay que marcar un nivel primero.
+     Volver hacia atras no requiere marcar el actual ni responder, pero solo se puede
+     ir a un caracter anterior ya categorizado (si no, se podria volver infinito). */
   function updateNextState() {
     const rated = isRated(order[index].hanzi);
-    prevBtn.disabled = !rated;
     nextBtn.disabled = !rated;
     navHintEl.hidden = rated;
+
+    const prevIndex = (index - 1 + order.length) % order.length;
+    prevBtn.disabled = !isRated(order[prevIndex].hanzi);
     renderProgressPanel(); // los conteos de abajo cambian al marcar
   }
 
