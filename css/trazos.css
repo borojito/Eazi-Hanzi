@@ -75,13 +75,11 @@
   accent-color: var(--color-primary);
 }
 
-/* Cuadricula de dibujo libre (modo "Dibujar sin ayuda") */
-.freehand-canvas {
-  position: relative;
-  z-index: 1;
-  display: block;
-  cursor: crosshair;
-  touch-action: none;
+.tz-recognize-hint {
+  margin: -0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 .tz-quiz-feedback {

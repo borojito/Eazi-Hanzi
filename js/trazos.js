@@ -38,6 +38,7 @@
   const speedWrap = document.getElementById('tz-speed');
   const speedRange = document.getElementById('tz-speed-range');
   const recognizeBtn = document.getElementById('tz-recognize');
+  const recognizeHintEl = document.getElementById('tz-recognize-hint');
 
   function loadSource() {
     if (isReview) return getStrugglingCharsData();
@@ -94,6 +95,7 @@
     playBtn.innerHTML = '&#9654;';
     quizFeedback.hidden = true;
     recognizeBtn.hidden = mode !== 'free';
+    recognizeHintEl.hidden = mode !== 'free';
     destroyFreehandBoards();
 
     if (mode === 'free') {

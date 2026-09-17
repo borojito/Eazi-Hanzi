@@ -263,11 +263,23 @@
 
     const recognizeRow = document.createElement('div');
     recognizeRow.className = 'reto-exercise__recognize-row';
+    const recognizeButtons = document.createElement('div');
+    recognizeButtons.className = 'reto-exercise__recognize-buttons';
     const recognizeBtn = document.createElement('button');
     recognizeBtn.type = 'button';
     recognizeBtn.className = 'btn btn-amber';
     recognizeBtn.textContent = 'Reconocer caracter';
-    recognizeRow.appendChild(recognizeBtn);
+    recognizeButtons.appendChild(recognizeBtn);
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'btn btn-secondary';
+    clearBtn.textContent = 'Borrar y volver a dibujar';
+    recognizeButtons.appendChild(clearBtn);
+    recognizeRow.appendChild(recognizeButtons);
+    const recognizeHint = document.createElement('p');
+    recognizeHint.className = 'reto-exercise__recognize-hint';
+    recognizeHint.textContent = 'Si tarda en reconocer, dale al botón de nuevo o borra y vuelve a dibujar.';
+    recognizeRow.appendChild(recognizeHint);
     const recognizeFeedback = document.createElement('p');
     recognizeFeedback.className = 'reto-exercise__recognize-feedback';
     recognizeFeedback.hidden = true;
@@ -277,6 +289,11 @@
     recognizeBtn.addEventListener('click', () =>
       recognizeWriting(ex, chars, currentWriters, recognizeBtn, recognizeFeedback)
     );
+    clearBtn.addEventListener('click', () => {
+      if (answered) return;
+      currentWriters.forEach((board) => board.clear());
+      recognizeFeedback.hidden = true;
+    });
   }
 
   async function recognizeWriting(ex, chars, boards, btn, feedbackEl) {
@@ -318,8 +335,7 @@
 
   function showFeedbackAndNext(isCorrect, message) {
     skipBtn.disabled = true;
-    const recognizeBtn = exerciseEl.querySelector('.reto-exercise__recognize-row button');
-    if (recognizeBtn) recognizeBtn.disabled = true;
+    exerciseEl.querySelectorAll('.reto-exercise__recognize-row button').forEach((b) => (b.disabled = true));
 
     const feedback = document.createElement('div');
     feedback.className = 'reto-exercise__feedback ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');

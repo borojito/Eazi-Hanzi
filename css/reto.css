@@ -120,6 +120,18 @@
   gap: 0.6rem;
   margin-top: 1rem;
 }
+.reto-exercise__recognize-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+.reto-exercise__recognize-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
 .reto-exercise__recognize-feedback {
   margin: 0;
   font-weight: 700;

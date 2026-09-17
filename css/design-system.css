@@ -361,6 +361,17 @@ img { max-width: 100%; display: block; }
   transform: translateY(-1px);
   background-image: repeating-linear-gradient(to right, rgba(212,163,89,0.35) 0 6px, transparent 6px 12px);
 }
+/* El canvas debe quedar posicionado (no "static") para pintarse encima de las
+   guias punteadas de arriba (::before/::after) — sin esto, un elemento sin
+   position queda por debajo de los pseudo-elementos posicionados del padre y
+   la guia tapa lo dibujado. */
+.freehand-canvas {
+  position: relative;
+  z-index: 1;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}
 .tianzige svg {
   position: relative;
   z-index: 1;
