@@ -267,8 +267,10 @@
   audioBtn.addEventListener('click', () => speakChinese(currentChar().hanzi));
   recognizeBtn.addEventListener('click', recognizeCurrent);
 
-  speedRange.addEventListener('change', () => {
-    if (mode === 'watch') buildBoards();
+  // se aplica en vivo (sin reconstruir las cuadriculas ni reiniciar la animacion)
+  speedRange.addEventListener('input', () => {
+    document.getElementById('tz-speed-value').textContent = Number(speedRange.value) + 'x';
+    writers.forEach((w) => w.updateOptions(hanziSpeedOptions(speedRange.value)));
   });
 
   prevBtn.addEventListener('click', () => goTo(charIndex - 1));

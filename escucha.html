@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escucha — Eazi Hanzi</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/escucha.css">
+</head>
+<body data-page="escucha">
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.svg" alt="Mascota Eazi Hanzi" class="brand__logo">
+      <span class="brand__name">Eazi Hanzi</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+    </nav>
+  </div>
+</header>
+
+<div class="app-shell">
+<aside class="mode-sidebar" id="mode-sidebar"></aside>
+
+<main>
+  <section class="section">
+    <div class="container">
+
+      <!-- ---------- 1. Frases ---------- -->
+      <div id="ls-setup">
+        <h1>Dictado de frases</h1>
+        <p class="text-muted">Escucha una frase en chino y escríbela. Practica tu comprensión auditiva.</p>
+
+        <div class="card ls-panel">
+          <label class="ls-panel__label" for="ls-phrases">Escribe tus frases en chino solamente</label>
+          <p class="text-muted ls-panel__hint">Una frase por línea (separa con Enter). Solo caracteres chinos, sin pinyin ni traducción.</p>
+          <textarea id="ls-phrases" rows="7" placeholder="我喜欢喝茶。&#10;今天天气很好。&#10;你想吃什么？"></textarea>
+          <div class="ls-panel__footer">
+            <span class="ls-count" id="ls-count">0 frases</span>
+            <div class="order-switch" id="ls-order-switch">
+              <button class="order-switch__btn" data-order="list">En orden</button>
+              <button class="order-switch__btn" data-order="random">Aleatorio</button>
+            </div>
+            <button class="btn btn-primary" id="ls-start" disabled>Comenzar</button>
+          </div>
+          <p class="ls-note" id="ls-note" hidden></p>
+        </div>
+      </div>
+
+      <!-- ---------- 2. Dictado ---------- -->
+      <div id="ls-play" hidden>
+        <div class="ls-play-header">
+          <span class="text-muted" id="ls-progress">Frase 1 / 1</span>
+          <button class="btn btn-ghost btn-sm" id="ls-quit">Salir</button>
+        </div>
+
+        <div class="card ls-stage">
+          <button class="ls-speaker" id="ls-speaker" aria-label="Escuchar la frase">
+            <span class="ls-speaker__icon">&#128266;</span>
+          </button>
+          <p class="ls-speaker__hint" id="ls-speaker-hint">Toca el altavoz para escuchar la frase</p>
+
+          <div class="ls-answer" id="ls-answer" hidden>
+            <div class="ls-modes" role="tablist">
+              <button class="ls-mode is-active" data-mode="type" role="tab">&#9000; Teclado (pinyin)</button>
+              <button class="ls-mode" data-mode="draw" role="tab">&#9998; Dibujar</button>
+              <button class="ls-mode" data-mode="paper" role="tab">&#128196; En papel</button>
+            </div>
+
+            <!-- Texto que va armando la respuesta (teclado y dibujo) -->
+            <div class="ls-compose" id="ls-compose">
+              <div class="ls-compose__text" id="ls-compose-text" aria-live="polite"></div>
+              <button class="btn btn-ghost btn-sm" id="ls-compose-del" title="Borrar el último carácter">&#9003; Borrar</button>
+            </div>
+
+            <!-- Modo teclado -->
+            <div class="ls-pane" id="ls-pane-type">
+              <input type="text" id="ls-pinyin-input" class="ls-pinyin-input" autocomplete="off" autocapitalize="off" spellcheck="false"
+                     placeholder="Escribe pinyin sin tonos: woxihuanchacha…">
+              <div class="ls-candidates" id="ls-candidates" aria-live="polite"></div>
+              <p class="ls-pane__hint">Elige la opción con el mouse o con los números 1–9. Espacio elige la primera.</p>
+            </div>
+
+            <!-- Modo dibujo -->
+            <div class="ls-pane" id="ls-pane-draw" hidden>
+              <div class="ls-draw-board" id="ls-draw-board"></div>
+              <div class="ls-draw-actions">
+                <button class="btn btn-amber" id="ls-recognize">Reconocer caracter</button>
+                <button class="btn btn-secondary" id="ls-draw-clear">Borrar dibujo</button>
+              </div>
+              <div class="ls-candidates" id="ls-draw-candidates" aria-live="polite"></div>
+              <p class="ls-pane__hint" id="ls-draw-hint">Dibuja un carácter, reconócelo y elígelo. Repite con el siguiente.</p>
+            </div>
+
+            <!-- Modo papel -->
+            <div class="ls-pane" id="ls-pane-paper" hidden>
+              <p class="ls-paper-text">Escribe la frase en tu hoja. Cuando termines, descubre la respuesta y marca tú misma en cuáles te equivocaste.</p>
+            </div>
+
+            <button class="btn btn-primary btn-block ls-check" id="ls-check">Comprobar</button>
+          </div>
+
+          <!-- Revisión -->
+          <div class="ls-review" id="ls-review" hidden>
+            <p class="ls-review__kicker" id="ls-review-kicker"></p>
+            <div class="ls-phrase" id="ls-phrase"></div>
+            <div class="ls-errors" id="ls-errors"></div>
+            <p class="ls-paper-instruction" id="ls-paper-instruction" hidden>Toca los caracteres en los que te equivocaste.</p>
+            <button class="btn btn-secondary" id="ls-replay">&#128266; Escuchar otra vez</button>
+            <button class="btn btn-primary" id="ls-next">Siguiente</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- 3. Resultados ---------- -->
+      <div id="ls-results" hidden>
+        <h1>Resultados del dictado</h1>
+        <div class="card ls-score-card">
+          <span class="ls-score__value" id="ls-score-value">0%</span>
+          <p id="ls-score-label">0 de 0 frases sin errores</p>
+        </div>
+
+        <div class="ls-summary" id="ls-summary"></div>
+
+        <div class="ls-results-actions">
+          <button class="btn btn-primary" id="ls-retry" hidden>Intentar nuevamente con las que fallé</button>
+          <button class="btn btn-secondary" id="ls-restart">Nuevo dictado</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+</div>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="js/storage.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/order-ui.js"></script>
+<script src="js/site-footer.js"></script>
+<script src="js/mode-sidebar.js"></script>
+<script src="js/hanzi-boards.js"></script>
+<script src="js/handwriting.js"></script>
+<script src="js/pinyin-ime.js"></script>
+<script src="js/dictation-diff.js"></script>
+<script src="js/escucha.js"></script>
+
+</body>
+</html>

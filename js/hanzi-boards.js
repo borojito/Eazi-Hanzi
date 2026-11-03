@@ -19,6 +19,16 @@ function boardSizeFor(count, containerWidth) {
   return Math.max(105, Math.min(maxSize, perBoard));
 }
 
+/* Velocidad de la animacion (0.25x - 3x). Afecta tanto la rapidez de cada trazo
+   como la pausa entre trazos: con la pausa fija casi no se notaba el cambio. */
+function hanziSpeedOptions(speed) {
+  const v = Number(speed) || 1;
+  return {
+    strokeAnimationSpeed: v,
+    delayBetweenStrokes: Math.round(500 / v),
+  };
+}
+
 /* Crea una cuadricula por caracter y devuelve { writers, chars, size } */
 function createHanziBoards(containerEl, word, opts) {
   const options = opts || {};
@@ -46,8 +56,7 @@ function createHanziBoards(containerEl, word, opts) {
         // showOutline para no revelar el caracter un instante antes de que el
         // quiz lo oculte (por ej. en el modo "de memoria" del Reto).
         showCharacter: options.showCharacter !== undefined ? options.showCharacter : options.showOutline !== false,
-        strokeAnimationSpeed: options.speed || 1,
-        delayBetweenStrokes: 250,
+        ...hanziSpeedOptions(options.speed),
         strokeColor: '#C22F2F',
         outlineColor: 'rgba(212,163,89,0.45)',
         drawingColor: '#3B7A57',

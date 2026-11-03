@@ -1,5 +1,7 @@
-/* Eazi Hanzi — Pie de pagina compartido: accesos a los otros modulos
-   + boton para empezar con caracteres nuevos.
+/* Eazi Hanzi — Pie de pagina compartido.
+   - Paginas de caracteres: accesos a los otros modulos + boton para empezar con
+     caracteres nuevos.
+   - Escucha y Orden de trazos: solo un acceso para elegir otra practica.
    Se inyecta segun el data-page del <body>. */
 
 const SITE_PAGES = [
@@ -9,10 +11,21 @@ const SITE_PAGES = [
   { id: 'reto', href: 'reto.html', label: 'Reto' },
 ];
 
+const STANDALONE_PAGES = ['escucha', 'orden'];
+
 function renderSiteFooter() {
   const current = document.body.dataset.page || '';
   const host = document.getElementById('site-footer');
   if (!host) return;
+
+  if (STANDALONE_PAGES.includes(current)) {
+    host.innerHTML =
+      '<div class="container site-footer__inner">' +
+      '<p class="site-footer__title">¿Quieres practicar otra cosa?</p>' +
+      '<div class="site-footer__links"><a href="index.html" class="btn btn-secondary">Elegir otra práctica</a></div>' +
+      '</div>';
+    return;
+  }
 
   const links = SITE_PAGES.filter((p) => p.id !== current)
     .map((p) => {
@@ -21,11 +34,11 @@ function renderSiteFooter() {
     })
     .join('');
 
-  // en el inicio no tiene sentido el boton que lleva al inicio
-  const restart = current === 'index'
+  // en la pagina de preparar la lista no tiene sentido el boton que lleva a ella
+  const restart = current === 'caracteres'
     ? ''
     : '<div class="site-footer__restart">' +
-      '<a href="index.html" class="btn btn-ghost">¿Estudiar nuevos caracteres?</a>' +
+      '<a href="caracteres.html" class="btn btn-ghost">¿Estudiar nuevos caracteres?</a>' +
       '</div>';
 
   host.innerHTML =

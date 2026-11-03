@@ -39,7 +39,11 @@ Si se cambia esta estrategia (ej. por un diccionario tipo CC-CEDICT embebido), a
 
 ## Estructura de la app (pantalla inicial + 4 módulos)
 
-### Pantalla inicial — "Prepárate para aprender" (`index.html`)
+### Inicio (`index.html`) — selector de práctica
+Solo pregunta **"¿Qué quieres practicar hoy?"** con 3 tarjetas, una por área, cada una con su color: **Practicar caracteres** (`caracteres.html`, bermellón), **Practicar escucha** (`escucha.html`, naranja caqui) y **Orden de trazos** (`orden.html`, rosa durazno). Los colores viven como `--area-*` en `design-system.css`. El logo de todas las páginas lleva a este inicio. Las áreas de Escucha y Orden de trazos son **independientes**: su barra superior solo tiene "Inicio" (→ `index.html`); la barra "Inicio / Flashcards / Pinyin / Trazos / Reto" es solo de las páginas de caracteres (donde "Inicio" → `caracteres.html`). `mode-sidebar.js` (barra lateral izquierda con las 3 áreas) está en `caracteres.html`, `escucha.html` y `orden.html`.
+
+### Preparar la lista — "Prepárate para aprender" (`caracteres.html`)
+(Antes era `index.html`; `data-page="caracteres"`.)
 - Textarea con el prompt para IA (copiable) + textarea para pegar la respuesta de la IA.
 - Botón **"Comenzar"**: parsea la respuesta y la guarda como lista activa de la sesión (`ehpy.activeList`); esa lista alimenta los 4 módulos.
 - Botón **"Repaso de complicados"**: lleva directo a Flashcards en modo repaso (`flashcards.html?review=1`) usando los caracteres en nivel "Necesito seguir estudiando" / "Podría repasar", sin pedir texto nuevo.
@@ -65,7 +69,7 @@ Si se cambia esta estrategia (ej. por un diccionario tipo CC-CEDICT embebido), a
 - Tres modos:
   - **Ver animación**: reproduce el orden de trazos con Hanzi Writer.
   - **Dibujar con ayuda**: quiz de Hanzi Writer con el contorno del carácter visible de fondo (`showOutline: true`), valida trazo por trazo y da pista automática a los 2 fallos.
-  - **Dibujar sin ayuda**: dibujo **libre** al estilo drawchinese.com — no es Hanzi Writer. Es una cuadrícula de dibujo propia (`js/handwriting.js`, `createFreehandBoard`) donde el usuario dibuja con el mouse/dedo sin ninguna validación en el camino; al tocar "Reconocer caracter" se manda el trazo al servicio público de reconocimiento de escritura a mano de Google (`inputtools.google.com/request?ime=handwriting`, la misma API que usan herramientas como drawchinese.com/MDBG) y se compara el carácter reconocido contra el real. **Es la única dependencia externa de la app** — se eligió a propósito para lograr dibujo verdaderamente libre, algo que Hanzi Writer no permite (siempre valida contra el trazo esperado). Si falla la conexión se muestra un aviso en vez de romper la pantalla.
+  - **Dibujar sin ayuda**: dibujo **libre** al estilo drawchinese.com — no es Hanzi Writer. Es una cuadrícula de dibujo propia (`js/handwriting.js`, `createFreehandBoard`) donde el usuario dibuja con el mouse/dedo sin ninguna validación en el camino; al tocar "Reconocer caracter" se manda el trazo al servicio público de reconocimiento de escritura a mano de Google (`inputtools.google.com/request?ime=handwriting`, la misma API que usan herramientas como drawchinese.com/MDBG) y se compara el carácter reconocido contra el real. **Es (junto con el IME de pinyin de la sección Escucha, mismo host) la única dependencia externa de la app** — se eligió a propósito para lograr dibujo verdaderamente libre, algo que Hanzi Writer no permite (siempre valida contra el trazo esperado). Si falla la conexión se muestra un aviso en vez de romper la pantalla.
 - **Una sola barra de controles** para los tres modos (había dos botones de reiniciar): reiniciar y audio siempre visibles; reproducir y velocidad solo en modo animación.
 - Soporta `?review=1`.
 
@@ -80,6 +84,26 @@ Si se cambia esta estrategia (ej. por un diccionario tipo CC-CEDICT embebido), a
 - **Reconocer correctamente cuenta como acierto** en escritura — no hay conteo de errores de trazo, solo si el reconocimiento coincidió o no.
 - El Reto **siempre va en orden aleatorio** (no tiene switch de orden).
 - Pantalla de resultados con puntaje y resumen de aciertos/errores.
+
+## Sección "Escucha" — dictado de frases (`escucha.html`)
+
+Segunda área de la app, independiente de la lista de caracteres y de sus módulos (no aparece en el nav de Flashcards…Reto). Se llega desde el inicio o desde la **barra lateral izquierda** (`js/mode-sidebar.js`, `.mode-sidebar`).
+
+- **Tema naranja**: `escucha.css` redefine `--color-primary*` (caqui `#CC5A20`) solo bajo `body[data-page="escucha"]`. Los errores siguen en rojo (`--color-danger`).
+- **Frases**: textarea "Escribe tus frases en chino solamente", una por línea (borrador en `ehpy.listening.draft`, lo borra `resetApp`). Líneas sin caracteres chinos se ignoran. No usan `activeList` ni niveles de dominio.
+- **Dictado**: altavoz grande en el centro → reproduce una frase aleatoria (cada frase sale una vez por ronda) y recién entonces aparecen las 3 formas de responder:
+  1. **Teclado (pinyin)**: se escribe pinyin sin tonos y salen candidatos de caracteres (`js/pinyin-ime.js`, Google Input Tools — misma dependencia externa que el reconocimiento de escritura; usa `matched_length` para consumir solo lo elegido). Teclas 1–9 / espacio eligen.
+  2. **Dibujar**: un `createFreehandBoard` + "Reconocer caracter"; se elige entre los candidatos y se agrega a la respuesta.
+  3. **En papel**: se muestra la frase y la usuaria toca los caracteres donde se equivocó.
+- **Revisión** (`js/dictation-diff.js`, `compareDictation`): LCS sobre solo los caracteres chinos (ignora puntuación). La frase sale grande con los errores en rojo + una fila por error ("Pusiste «X» · Debía ser «Y» / Te faltó / Te sobró").
+- **Resultados**: porcentaje de frases sin errores y botón "Intentar nuevamente con las que fallé" (misma mecánica, solo con las falladas).
+- **Deshacer / Ctrl+Z**: todo `createFreehandBoard` (Trazos "sin ayuda", Reto escritura y Escucha) trae un botón ↶ y atiende Ctrl+Z sobre el último tablero tocado. El quiz de Hanzi Writer ("con ayuda") no lo tiene.
+
+## Sección "Orden de trazos" (`orden.html`)
+
+Consulta libre, sin lista ni niveles, área independiente con **tema rosa durazno** (`--area-orden*`, fondo cálido amarillento, solo bajo `body[data-page="orden"]`). La barra lateral tiene 3 entradas: Practicar caracteres / Practicar escucha / Orden de trazos ("caracteres", no "letras"). **Velocidad**: rango 0.25x–3x y `hanziSpeedOptions()` (en `hanzi-boards.js`) escala también la pausa entre trazos; se aplica en vivo con `updateOptions` y el evento `input` (también en Trazos). Antes, rango 0.5–2 con pausa fija casi no se notaba. Se escribe cualquier palabra en chino (máx. 12 caracteres) y debajo sale una cuadrícula de Hanzi Writer por carácter, con pinyin, número de trazos, reproducir/pausar, reiniciar, audio y velocidad. **Al pasar el mouse (o tocar) una cuadrícula se anima solo ese carácter.** El pinyin sale de **pinyin-pro** (CDN jsDelivr fijo en 3.26.0; se calcula por tramo para resolver lecturas como 银行/行走) — segunda librería externa de la app, evaluada porque Hanzi Writer no trae pinyin y no hay diccionario propio.
+
+Escucha también tiene el `.order-switch` "En orden / Aleatorio" (comparte `ehpy.randomOrder`).
 
 ## Orden de práctica (aleatorio vs. lista)
 
@@ -121,7 +145,7 @@ Se renderizan con `renderMasteryPanel()` (`js/mastery-ui.js`) como un **panel a 
 ## Otros elementos compartidos
 
 - `js/speech.js` — `speakChinese()` y `createAudioButton()`. Hay botón de audio en los 4 módulos.
-- `js/site-footer.js` — inyecta el pie "Seguir repasando…" con accesos a los otros módulos (según el `data-page` del `<body>`) y el botón "¿Estudiar nuevos caracteres?" que vuelve al inicio.
+- `js/site-footer.js` — en las páginas de caracteres inyecta el pie "Seguir repasando…" con accesos a los otros módulos (según el `data-page` del `<body>`) y el botón "¿Estudiar nuevos caracteres?" que vuelve a `caracteres.html`; en Escucha y Orden de trazos solo "Elegir otra práctica" (→ `index.html`).
 - `resetApp()` en `storage.js` borra **todo** lo guardado; el botón vive en el inicio ("Borrar todo y empezar de cero").
 - El Reto va destacado en rojo (`.module-card--reto` en el inicio, `.btn-reto` en el pie).
 - **No hay pista / rayos X en ningún módulo** — se quitó a propósito.

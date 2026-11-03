@@ -19,7 +19,7 @@
       <span class="brand__name">Eazi Hanzi</span>
     </a>
     <nav class="main-nav">
-      <a href="index.html">Inicio</a>
+      <a href="caracteres.html">Inicio</a>
       <a href="flashcards.html">Flashcards</a>
       <a href="pinyin.html">Pinyin</a>
       <a href="trazos.html" class="is-active">Trazos</a>
@@ -35,7 +35,7 @@
       <div class="card empty-state" id="tz-empty-state" hidden>
         <h2>Todavia no tienes caracteres</h2>
         <p>Ve a la pantalla de inicio y pega tu lista para empezar a practicar.</p>
-        <a href="index.html" class="btn btn-primary">Ir a Prepárate para aprender</a>
+        <a href="caracteres.html" class="btn btn-primary">Ir a Prepárate para aprender</a>
       </div>
 
       <div id="tz-content" hidden>
@@ -76,7 +76,8 @@
                 <button class="btn-seal" id="tz-play" title="Reproducir / pausar">&#9654;</button>
                 <div class="tz-speed" id="tz-speed">
                   <label for="tz-speed-range">Velocidad</label>
-                  <input type="range" id="tz-speed-range" min="0.5" max="2" step="0.25" value="1">
+                  <input type="range" id="tz-speed-range" min="0.25" max="3" step="0.25" value="1">
+                  <output class="tz-speed__value" id="tz-speed-value" for="tz-speed-range">1x</output>
                 </div>
               </div>
 

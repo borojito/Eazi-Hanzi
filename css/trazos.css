@@ -74,6 +74,11 @@
 .tz-speed input[type="range"] {
   accent-color: var(--color-primary);
 }
+.tz-speed__value {
+  min-width: 2.6em;
+  font-weight: 800;
+  color: var(--color-primary);
+}
 
 .tz-recognize-hint {
   margin: -0.5rem 0 0;

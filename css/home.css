@@ -144,6 +144,50 @@
   box-shadow: 0 16px 34px -10px rgba(194,47,47,0.6);
 }
 
+/* ---------- Selector de area (inicio) ---------- */
+.area-section { padding-top: 0.5rem; }
+.area-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 900px) {
+  .area-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.area-card {
+  --area-color: var(--color-primary);
+  --area-color-hover: var(--color-primary-hover);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 2rem 1.75rem;
+  border-top: 5px solid var(--area-color);
+}
+.area-card--escucha { --area-color: var(--area-escucha); --area-color-hover: var(--area-escucha-hover); }
+.area-card--orden { --area-color: var(--area-orden); --area-color-hover: var(--area-orden-hover); }
+.area-card__icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-seal);
+  background: var(--area-color);
+  color: #fff;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+}
+.area-card h3 { margin: 0.4rem 0 0; font-size: 1.3rem; }
+.area-card p { margin: 0; font-size: 0.95rem; }
+.area-card__cta {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  font-weight: 800;
+  color: var(--area-color);
+}
+.area-card:hover .area-card__cta { color: var(--area-color-hover); }
+
 /* ---------- Reinicio total ---------- */
 .reset-row {
   margin-top: 2.5rem;

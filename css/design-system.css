@@ -24,6 +24,16 @@
   --color-danger-bg: #F7E7E5;
   --color-success-bg: #E7F0EA;
 
+  /* Color de cada area de la app (inicio, barra lateral y tema de cada pagina):
+     caracteres = bermellon, escucha = naranja caqui, orden de trazos = rosa durazno */
+  --area-escucha: #CC5A20;
+  --area-escucha-hover: #B94E18;
+  --area-escucha-active: #9C4012;
+  --area-orden: #CE5A6C;
+  --area-orden-hover: #B94D5E;
+  --area-orden-active: #9D3F4E;
+  --area-orden-tint: #FFEBCF;
+
   /* Tonos de pinyin */
   --tone-1: #C22F2F;
   --tone-2: #D4A359;
@@ -794,6 +804,101 @@ img { max-width: 100%; display: block; }
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 14px 28px -8px rgba(194,47,47,0.6);
 }
+
+/* ---------- Botón de deshacer en tableros de dibujo libre ---------- */
+.freehand-undo {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--radius-seal);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 1.15rem;
+  line-height: 1;
+  transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.freehand-undo:hover:not(:disabled) { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.freehand-undo:disabled { opacity: 0.4; cursor: default; }
+
+/* ---------- Barra lateral de modo (letras / escucha) ---------- */
+.app-shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .app-shell { grid-template-columns: 240px minmax(0, 1fr); }
+}
+.mode-sidebar {
+  padding: 1.25rem 1.5rem 0;
+}
+@media (min-width: 900px) {
+  .mode-sidebar {
+    position: sticky;
+    top: 0;
+    min-height: calc(100vh - 140px);
+    padding: 2.5rem 1.25rem;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+}
+.mode-sidebar__title {
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+.mode-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+@media (max-width: 899px) {
+  .mode-sidebar__nav { flex-direction: row; }
+  .mode-sidebar__nav > * { flex: 1; }
+  .mode-sidebar__text small { display: none; }
+}
+.mode-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: var(--radius-card);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface-sunken);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.15s ease;
+}
+.mode-sidebar__item:hover { transform: translateX(3px); box-shadow: var(--shadow-card-hover); }
+.mode-sidebar__item.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.mode-sidebar__item.is-active small { color: rgba(255,255,255,0.85); }
+.mode-sidebar__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: var(--radius-seal);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.mode-sidebar__text { display: flex; flex-direction: column; line-height: 1.25; }
+.mode-sidebar__text strong { font-size: 0.92rem; }
+.mode-sidebar__text small { font-size: 0.74rem; color: var(--color-text-muted); }
 
 /* ---------- Pie de página compartido ---------- */
 .site-footer {

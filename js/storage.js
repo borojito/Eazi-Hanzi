@@ -5,6 +5,7 @@ const STORAGE_KEYS = {
   mastery: 'ehpy.mastery',       // nivel de dominio por caracter, compartido entre modulos
   retoResults: 'ehpy.reto.results',
   randomOrder: 'ehpy.randomOrder', // practicar en orden de la lista o aleatorio
+  listeningDraft: 'ehpy.listening.draft', // texto de frases de la seccion Escucha
 };
 
 /* Niveles de dominio (compartidos por Flashcards, Pinyin y Trazos) */

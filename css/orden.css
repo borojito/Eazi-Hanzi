@@ -1,0 +1,38 @@
+/* Tema rosa durazno (rosa con un fondo amarillento calido) */
+body[data-page="orden"] {
+  --color-primary: var(--area-orden);
+  --color-primary-hover: var(--area-orden-hover);
+  --color-primary-active: var(--area-orden-active);
+  --color-bg: #FFF8EC;
+}
+body[data-page="orden"] .tianzige { background: var(--area-orden-tint); }
+
+.od-search { padding: 1.5rem; max-width: 640px; margin: 1.5rem 0 2rem; }
+.od-search__label { display: block; font-weight: 700; font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+.od-search__input {
+  width: 100%;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.od-search__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(206,90,108,0.2);
+}
+.od-search__note { margin: 0.6rem 0 0; font-size: 0.85rem; font-weight: 700; color: var(--color-danger); }
+
+.od-result { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+.od-pinyin { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+
+.od-boards { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem 1.25rem; width: 100%; }
+.od-cell { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+.od-cell .tianzige { cursor: pointer; transition: box-shadow 0.2s ease, transform 0.2s ease; }
+.od-cell:hover .tianzige { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+.od-cell__label { display: flex; align-items: center; gap: 0.6rem; }
+.od-cell__strokes { font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); }
+.od-hint { margin: 0; font-size: 0.82rem; color: var(--color-text-muted); text-align: center; }

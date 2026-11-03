@@ -6,6 +6,8 @@
 
 const HANDWRITING_API_URL = 'https://inputtools.google.com/request?ime=handwriting&app=mobilesearch&cs=1&oe=UTF-8';
 
+let activeFreehandBoard = null; // ultimo tablero tocado (recibe Ctrl+Z)
+
 /* Crea un tablero de dibujo libre dentro de containerEl (reusa la cuadricula
    .tianzige ya definida para los tableros de Hanzi Writer).
    Devuelve { getStrokes, hasStrokes, clear, destroy, size }. */
@@ -35,6 +37,50 @@ function createFreehandBoard(containerEl, size) {
   let current = null;
   let drawing = false;
 
+  /* Boton de deshacer (Ctrl+Z): quita el ultimo trazo dibujado */
+  const undoBtn = document.createElement('button');
+  undoBtn.type = 'button';
+  undoBtn.className = 'freehand-undo';
+  undoBtn.title = 'Deshacer último trazo (Ctrl+Z)';
+  undoBtn.setAttribute('aria-label', 'Deshacer último trazo');
+  undoBtn.innerHTML = '&#8630;';
+  undoBtn.disabled = true;
+  containerEl.appendChild(undoBtn);
+
+  function redraw() {
+    ctx.clearRect(0, 0, size, size);
+    strokes.forEach((s) => {
+      ctx.beginPath();
+      ctx.moveTo(s.x[0], s.y[0]);
+      for (let i = 1; i < s.x.length; i++) ctx.lineTo(s.x[i], s.y[i]);
+      ctx.stroke();
+    });
+  }
+
+  function syncUndo() {
+    undoBtn.disabled = strokes.length === 0;
+  }
+
+  function undo() {
+    if (strokes.length === 0) return false;
+    strokes.pop();
+    redraw();
+    syncUndo();
+    return true;
+  }
+
+  undoBtn.addEventListener('click', undo);
+
+  /* Ctrl+Z / Cmd+Z actua sobre el ultimo tablero con el que se interactuo */
+  function onKeydown(e) {
+    if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.key.toLowerCase() !== 'z') return;
+    if (activeFreehandBoard !== api) return;
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (undo()) e.preventDefault();
+  }
+  window.addEventListener('keydown', onKeydown);
+
   function pointFromEvent(e) {
     const rect = canvas.getBoundingClientRect();
     const src = e.touches ? e.touches[0] : e;
@@ -43,6 +89,7 @@ function createFreehandBoard(containerEl, size) {
 
   function start(e) {
     e.preventDefault();
+    activeFreehandBoard = api;
     drawing = true;
     const p = pointFromEvent(e);
     current = { x: [p.x], y: [p.y] };
@@ -66,6 +113,7 @@ function createFreehandBoard(containerEl, size) {
     drawing = false;
     if (current && current.x.length > 1) strokes.push(current);
     current = null;
+    syncUndo();
   }
 
   canvas.addEventListener('mousedown', start);
@@ -78,11 +126,14 @@ function createFreehandBoard(containerEl, size) {
   function clear() {
     strokes = [];
     current = null;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, size, size);
+    syncUndo();
   }
 
   function destroy() {
     window.removeEventListener('mouseup', end);
+    window.removeEventListener('keydown', onKeydown);
+    if (activeFreehandBoard === api) activeFreehandBoard = null;
   }
 
   /* Revela el caracter esperado sobre la cuadricula (ej. al saltar un ejercicio) */
@@ -97,14 +148,16 @@ function createFreehandBoard(containerEl, size) {
     ctx.restore();
   }
 
-  return {
+  const api = {
     getStrokes: () => strokes,
     hasStrokes: () => strokes.length > 0,
     clear,
+    undo,
     showAnswer,
     destroy,
     size,
   };
+  return api;
 }
 
 /* Manda los trazos dibujados al reconocedor de escritura de Google y devuelve la
